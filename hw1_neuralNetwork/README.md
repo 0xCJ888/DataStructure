@@ -12,6 +12,7 @@
 > - epoch:重複forward & backward直到滿足|outputErr = 期望值 - 實際值|<0.01
 > - 結果輸出：input.txt檔案讀入之輸入做XOR，並顯示期望值、實際值以及兩者誤差，還有計算epoch次數
 
+### OS : linux
 ## How to use
 輸入指令執行
 > 1. cd src

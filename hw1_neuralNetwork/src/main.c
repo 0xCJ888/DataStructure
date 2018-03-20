@@ -25,7 +25,7 @@ int main(){
     initNeuron(&outputLayers);
     
     for (int t = 0; t < INPUT_NUMBER; t++){
-        printf("\n %d) %d XOR %d ", count, data[count].inputs[0], data[count].inputs[1]);
+        printf("\n %d) %d XOR %d ", count+1, data[count].inputs[0], data[count].inputs[1]);
         int p = 0; 
         
         do{

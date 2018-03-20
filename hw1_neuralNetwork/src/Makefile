@@ -2,13 +2,13 @@ CC = gcc
 INC = NN.h
 OBJ = NN.o main.o
 
-all: test clean
+all: BP clean
 
 BP: ${OBJ} 
-	$(CC) -o $@ ${OBJ} 
+	$(CC) -o $@ ${OBJ} -lm
 %.o: %.c 
-	${CC} $< ${INC} -c -lm
+	${CC} $< ${INC} -c 
 
 .PHONY: clean 
 clean:
-	rm -r ${OBJ}
+	rm -r ${OBJ} ${INC}.gch
