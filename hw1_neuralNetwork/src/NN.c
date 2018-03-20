@@ -2,8 +2,8 @@
 
 void initNeuron(Neuron *n){
     for(int i = 0; i < NEURON_SIZE; i++)
-        n->weights[i] = RAND_DOUBLE;
-    n->bias = RAND_DOUBLE;
+        n->weights[i] = RAND;
+    n->bias = RAND;
 }
 
 double forward(Neuron *n){
@@ -17,8 +17,6 @@ double forward(Neuron *n){
 }
 
 void backward(Neuron *n, double error){
-
     for(int i = 0; i < NEURON_SIZE; i++)
-        n->weights[i] += error * n->inputs[i];
-    n->bias += error;
+        n->weights[i] -= LEARNING_RATE * (error * n->inputs[i]);
 }

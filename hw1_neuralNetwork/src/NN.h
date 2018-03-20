@@ -7,11 +7,11 @@
 
 #define NEURON_SIZE 2 
 #define INPUT_NUMBER 4
+#define LEARNING_RATE 0.5
 
 #define SIGMOID(x)       ( 1. / (1. + exp(-x)) )
 #define SIGMOID_DERIV(x) ( x * (1. - x) )
-#define RANDOM_RANGE(max) ( rand() % max )
-#define RAND_DOUBLE       ( (double)rand()/(double)RAND_MAX )
+#define RAND       ( (double)rand()/(double)RAND_MAX )
 
 typedef struct{
     int inputs[2];
