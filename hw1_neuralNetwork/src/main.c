@@ -17,17 +17,16 @@ int main(){
     while(fscanf(pFile,"%d %d %d", &data[i].inputs[0], &data[i].inputs[1], &data[i].result)!=EOF)
         i++;
     
+    /* init weight and bias (random) */
+    Neuron intermediateLayers[NEURON_SIZE];
+    for (int i = 0; i < NEURON_SIZE; i++)
+        initNeuron(&intermediateLayers[i]);
+    Neuron outputLayers;
+    initNeuron(&outputLayers);
     
     for (int t = 0; t < INPUT_NUMBER; t++){
         printf("\n %d) %d XOR %d ", count, data[count].inputs[0], data[count].inputs[1]);
         int p = 0; 
-        
-        /* init weight and bias (random) */
-        Neuron intermediateLayers[NEURON_SIZE];
-        for (int i = 0; i < NEURON_SIZE; i++)
-            initNeuron(&intermediateLayers[i]);
-        Neuron outputLayers;
-        initNeuron(&outputLayers);
         
         do{
             /* forward */

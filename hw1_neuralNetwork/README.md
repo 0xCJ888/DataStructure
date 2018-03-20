@@ -3,11 +3,9 @@
 ## XOR邏輯運算 ##
 ![執行XOR運算的三層網路](XOR運算的三層網路.png)
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-
 > - input.txt 裡有2個輸入(X1、X2)及1個預期結果(Y5)(共4筆)
 > - weight and bias 皆為 亂數給予
-> - activation function 採用  Sigoid function : $$\frac{1/ (1+exp(-x))}$$
+> - activation function 採用  Sigoid function
 > - learning rate 設為0.5
 > - forward函式為激勵：計算隱含層、輸出層實際輸出
 > - backward函式為訓練權重：更新隱含層、輸出層神經元的權重
