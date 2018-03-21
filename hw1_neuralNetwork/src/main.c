@@ -26,7 +26,6 @@ int main(){
     
     for (int t = 0; t < INPUT_NUMBER; t++){
         printf("\n %d) %d XOR %d ", count+1, data[count].inputs[0], data[count].inputs[1]);
-        int p = 0; 
         
         do{
             /* forward */
@@ -47,10 +46,8 @@ int main(){
                 backward(&intermediateLayers[i], err);
             }
 
-            /* Epoch */
-            p++;
         }while(outputErr > 0.001 || outputErr < -0.001);
-        printf("= %d(except value) %f(real value) => ERR:%f => Epoch = %d", data[count].result, output, outputErr, p);
+        printf("= %d(except value) %f(real value) => ERR:%f", data[count].result, output, outputErr);
         count++;
     }
     
