@@ -2,7 +2,7 @@ CC = gcc
 INC = NN.h
 OBJ = NN.o main.o
 
-all: BP clean
+all: BP
 
 BP: ${OBJ} 
 	$(CC) -o $@ ${OBJ} -lm

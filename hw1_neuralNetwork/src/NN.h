@@ -6,23 +6,26 @@
 #include <math.h>
 
 #define NEURON_SIZE 2 
-#define INPUT_NUMBER 4
-#define LEARNING_RATE 0.5
+#define DATA_SIZE 4
 
 #define SIGMOID(x)       ( 1. / (1. + exp(-x)) )
 #define SIGMOID_DERIV(x) ( x * (1. - x) )
 #define RAND       ( (double)rand()/(double)RAND_MAX )
 
 typedef struct{
-    int inputs[2];
-    int result;
-}Data;
+  double inputs[2];
+  double result;
+} DataDouble;
 
 typedef struct{
-    double inputs[NEURON_SIZE];
-    double weights[NEURON_SIZE];
-    double bias;
-}Neuron;
+  int inputs[2];
+  int result;
+} Data;
+typedef struct{
+  double inputs[NEURON_SIZE];
+  double weights[NEURON_SIZE]; 
+  double bias;
+} Neuron;
 
 void initNeuron(Neuron *n);
 double forward(Neuron *n);
