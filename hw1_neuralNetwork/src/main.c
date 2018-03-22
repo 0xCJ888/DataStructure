@@ -6,6 +6,7 @@ int main(){
     double output;
     double outputErr;
     double err;
+    double ERR = 1;
 
     /* open and read file */
     Data data[INPUT_NUMBER];
@@ -23,11 +24,11 @@ int main(){
         initNeuron(&intermediateLayers[i]);
     Neuron outputLayers;
     initNeuron(&outputLayers);
-    
-    for (int t = 0; t < INPUT_NUMBER; t++){
-        printf("\n %d) %d XOR %d ", count+1, data[count].inputs[0], data[count].inputs[1]);
-        
-        do{
+
+    while(ERR > 0.001 || ERR < -0.001){
+        for (int t = 0; t < INPUT_NUMBER; t++){
+            if(count == 4) count = 0;
+            
             /* forward */
             for (int i = 0; i < NEURON_SIZE; i++){
                 Neuron *l = &intermediateLayers[i];
@@ -37,6 +38,7 @@ int main(){
                 outputLayers.inputs[i] = forward(l);
             }
             output = forward(&outputLayers);
+            ERR = data[count].result - output;
 
             /* backward */
             outputErr = SIGMOID_DERIV(output) * (data[count].result - output);
@@ -46,8 +48,27 @@ int main(){
                 backward(&intermediateLayers[i], err);
             }
 
-        }while(outputErr > 0.001 || outputErr < -0.001);
-        printf("= %d(except value) %f(real value) => ERR:%f", data[count].result, output, outputErr);
+            count++;
+        }
+    }
+
+    /* display */
+    count = 0;
+    for (int t = 0; t < INPUT_NUMBER; t++){
+        if(count == 4) count = 0;
+        printf("\n %d) %d XOR %d ", count+1, data[count].inputs[0], data[count].inputs[1]);
+
+        for (int i = 0; i < NEURON_SIZE; i++){
+            Neuron *l = &intermediateLayers[i];
+            for (int j = 0; j < NEURON_SIZE; j++){
+                l->inputs[j] = data[count].inputs[j];
+            }
+            outputLayers.inputs[i] = forward(l);
+        }
+        output = forward(&outputLayers);
+        ERR = output - data[count].result;
+        
+        printf("= %f(real output) , %d(except output) , ERR = %f", output, data[count].result, ERR);
         count++;
     }
     
