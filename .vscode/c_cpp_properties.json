@@ -49,7 +49,8 @@
                 "C:\\Users\\ciao2\\AppData\\Local\\Packages\\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\\LocalState\\rootfs\\usr\\include",
                 "C:/Users/ciao2/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/usr/include/x86_64-linux-gnu",
                 "C:/Users/ciao2/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/usr/include/linux",
-                "C:\\Users\\ciao2\\Downloads\\DataStructure\\hw2_alarm\\libev"
+                "C:\\Users\\ciao2\\Downloads\\DataStructure\\hw2_alarm\\libev",
+                "${workspaceFolder}/hw2_alarm/lib"
             ],
             "defines": [
                 "_DEBUG",

@@ -1,8 +1,8 @@
 
 all:bin/alarm
 
-bin/alarm:src/main.c src/setTime.c src/multiTimer.c libev/ev.o libev/event.o 
-	gcc -std=c99 -o bin/alarm -I ./libev src/main.c src/setTime.c src/multiTimer.c libev/ev.o libev/event.o -lm
+bin/alarm:src/main.c src/setTime.c src/multiTimer.c lib/libev.a
+	gcc -std=c99 -o bin/alarm -I ./lib src/main.c src/setTime.c src/multiTimer.c lib/libev.a -lm
 
 .PHONY: clean
 clean:
