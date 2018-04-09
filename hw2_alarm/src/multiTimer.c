@@ -36,3 +36,14 @@ void deleteTimer(TIME *t){
     *t = tmp->clock;
     free(tmp);
 }
+
+void printList(void){
+    TIMER* point;
+    point = front;
+    if(point == NULL)
+        puts("No Timer now!\n");
+    for(; point != NULL; point = point->next){
+        time_t t = mktime(&point->clock);
+        printf("Timer %d set time is %s\n", (int)point->timeout_watcher.data, ctime(&t));
+    }
+}

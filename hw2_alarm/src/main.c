@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-void printList(void);
 typedef enum {insert=1, delete, view, quit}MODE;
 INFO info;
 unsigned char number = 0;
@@ -14,7 +13,7 @@ unsigned char number = 0;
 static void timeout_cb (EV_P_ ev_timer *timer_w, int revents){
     printf("Tiemr %d is ring\n", (int)(timer_w->data));
     // this causes the innermost ev_run to stop iterating
-    //ev_break (EV_A_ EVBREAK_ONE);
+    ev_break (EV_A_ EVBREAK_ONE);
 }
 
 static void stdin_readable_cb (struct ev_loop *loop, ev_io *w, int revents){
@@ -42,6 +41,8 @@ static void stdin_readable_cb (struct ev_loop *loop, ev_io *w, int revents){
             check = true;
         }
     }while(check);
+     // this causes all nested ev_run's to stop iterating
+    ev_break (EV_A_ EVBREAK_ALL);
 }
 
 int main(void){   
@@ -63,10 +64,9 @@ int main(void){
                 info = inputSec();
                 TIMER* timer = insertTimer(info.time);
                 timer->timeout_watcher.data = (void *) alarmNum;
-                
+                ev_timer_stop (loop, &timer->timeout_watcher);
                 ev_timer_init(&timer->timeout_watcher, timeout_cb, info.seconds, 0.);
                 ev_timer_start(loop, &timer->timeout_watcher);
-                ev_run(loop,0);
             }
                 break;
             case delete:
@@ -80,17 +80,7 @@ int main(void){
                 exit(1);
                 break;
         }
+        ev_io_stop (loop, &stdin_readable);
     }
     return 0;
-}
-
-void printList(void){
-    TIMER* point;
-    point = front;
-    if(point == NULL)
-        puts("No Timer now!\n");
-    for(; point != NULL; point = point->next){
-        time_t t = mktime(&point->clock);
-        printf("Timer %d set time is %s\n", (int)point->timeout_watcher.data, ctime(&t));
-    }
 }

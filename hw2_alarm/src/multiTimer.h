@@ -13,6 +13,7 @@ typedef struct timer{
 
 TIMER* insertTimer(TIME t);
 void deleteTimer(TIME *t);
+void printList(void);
 
 extern TIMER *front;
 extern TIMER *rear;  
