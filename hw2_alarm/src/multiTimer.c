@@ -1,6 +1,7 @@
 #include "multiTimer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 
 TIMER *front = NULL;
@@ -8,33 +9,48 @@ TIMER *rear = NULL;
 
 /* insert at the rear */
 TIMER* insertTimer(TIME t){
-    TIMER *tmp = (TIMER*) malloc(sizeof(TIMER));
-    if(tmp == NULL){
+    TIMER *current = (TIMER*) malloc(sizeof(TIMER));
+    if(current == NULL){
         fprintf(stderr, "Error: unable to allocate required memory\n");
         exit(1);
     }
-    tmp->clock = t;
-    tmp->next = NULL;
+    current->clock = t;
+    current->next = NULL;
     if(rear == NULL)
-        front = tmp;
+        front =current;
     else
-        rear->next = tmp;
-    rear = tmp;
-    return tmp;
+        rear->next = current;
+    rear = current;
+    return current;
 }
 
-/* delete from front */
-void deleteTimer(TIME *t){
-    TIMER *tmp;
+/* delete */
+void deleteTimer(int num){
+    TIMER *current;
+    TIMER *previous = NULL;
     if(front == NULL)
         printf("Timer is empty\n");
-    tmp = front;
-    front = front->next;
-    /* only one node */
-    if(front == NULL)
-        rear = NULL;
-    *t = tmp->clock;
-    free(tmp);
+    current = front;
+
+    while((current != NULL) && current->timerName != num){
+        previous = current;
+        current = current->next;
+    }
+
+    if (current == NULL)
+        printf("There is no timer %d  can delete!\n", num);
+    /* first node */
+    else if(current == front){
+        front = current->next;
+        printf("Timer %hhd is deleted\n", current->timerName);
+        free(current);
+    }
+    else{
+        previous->next = current->next;
+        printf("Timer %hhd is deleted\n", current->timerName);
+        free(current);
+    }
+    
 }
 
 void printList(void){
@@ -44,6 +60,6 @@ void printList(void){
         puts("No Timer now!\n");
     for(; point != NULL; point = point->next){
         time_t t = mktime(&point->clock);
-        printf("Timer %d set time is %s\n", (int)point->timeout_watcher.data, ctime(&t));
+        printf("p Timer %d set time is %s\n", point->timerName, ctime(&t));
     }
 }

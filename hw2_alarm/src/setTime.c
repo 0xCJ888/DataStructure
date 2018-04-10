@@ -20,7 +20,7 @@ INFO inputSec(void){
         check = false;
         printf("year(began at 2018)=");
         ref = scanf("%d", &info.time.tm_year);
-        char c = getchar();
+        getchar();
         if(ref == 0){
             printf("Please input a integer\n");
             check = true;
@@ -36,7 +36,7 @@ INFO inputSec(void){
         check = false;
         printf("month(1~12)=");
         ref = scanf("%d", &info.time.tm_mon);
-        char c = getchar();
+        getchar();
         if(ref == 0){
             printf("Please input a integer\n");
             check = true;
@@ -52,7 +52,7 @@ INFO inputSec(void){
         check = false;
         printf("day(1~31)=");
         ref = scanf("%d", &info.time.tm_mday);
-        char c = getchar();
+        getchar();
         if(ref == 0){
             printf("Please input a integer\n");
             check = true;
@@ -67,7 +67,7 @@ INFO inputSec(void){
         check = false;
         printf("hour(24H)=");
         ref = scanf("%d", &info.time.tm_hour);
-        char c = getchar();
+        getchar();
         if(ref == 0){
             printf("Please input a integer\n");
             check = true;
@@ -83,7 +83,7 @@ INFO inputSec(void){
         printf("minute=");
         ref = scanf("%d", &info.time.tm_min);
         fflush(stdin);
-        char c = getchar();
+        getchar();
         if(info.time.tm_min < 0 || info.time.tm_min >= 60){
             printf("Please input 0~59 min \n");
             check = true;
@@ -95,7 +95,7 @@ INFO inputSec(void){
         printf("second=");
         ref = scanf("%d", &info.time.tm_sec);
         fflush(stdin);
-        char c = getchar();
+        getchar();
         if(info.time.tm_sec < 0 || info.time.tm_sec >= 60){
             printf("Please input 0~59s\n");
             check = true;
@@ -109,3 +109,54 @@ INFO inputSec(void){
     return info;
 }
 
+REPEAT isRepeat(void){
+    char ref;
+    int num;
+    bool check = false;
+    REPEAT Repeat;
+    puts("Do you want to repeat alarm? [1] YES [2] NO");
+    do{
+        check = false;
+        ref = scanf("%d", &num);
+        getchar();
+        if(ref == 0){
+            printf("Please input a integer\n");
+            check = true;
+        }
+        if(num!=1 && num !=2){
+            puts("Please input number 1 or 2");
+            check = true;
+        }
+    }while(check);
+    
+    if(num == 1)
+        Repeat.isRepeat = true;
+    else if (num == 2)
+        Repeat.isRepeat = false;
+
+    if(num == 1){
+        puts("input how much time you want to repeat?");
+        do{
+            check = false;
+            ref = scanf("%d", &num);
+            getchar();
+            if (ref == 0){
+                puts("Plese input integer");
+                check = true;
+            }
+        }while(check);
+        Repeat.RepeatTime = num;
+    }
+    return Repeat;
+}
+
+int selectDel(void){
+    char ref;
+    int timerSelect;
+    puts("Select which timer you want to delete");
+    ref = scanf("%d", &timerSelect);
+    getchar();
+    if(ref == 0)
+        printf("Please input a integer\n");
+    return timerSelect;
+}
