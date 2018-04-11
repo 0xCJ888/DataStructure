@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <time.h>
 
-typedef enum {insert=1, delete, view, update, quit}MODE;
+typedef enum {insert=1, delete, dump, update, quit}MODE;
 INFO info;
 unsigned char number = 0;
 
@@ -34,7 +34,7 @@ static void stdin_readable_cb (struct ev_loop *loop, ev_io *w, int revents){
         switch(number){
             case insert:
             case delete:
-            case view:
+            case dump:
             case update:
             case quit:
                 check = false;
@@ -56,30 +56,30 @@ int main(void){
     ev_io stdin_readable;
 
     for( ;mode != quit; ){
-        printf("[1]Insert alarm [2]Delete alarm [3]ViewAlarmList [4]Update [5]Quit\n");
+        printf("[1]Insert alarm [2]Delete alarm [3]Dump [4]Update [5]Quit\n");
         ev_io_init (&stdin_readable, stdin_readable_cb, 0, EV_READ);
         ev_io_start (loop, &stdin_readable);
         ev_run(loop,0);
 
         mode = number;
         switch(mode){
+            case update:
+                number = selectModify();
+                deleteTimer(number);
+                
             case insert:{
                 alarmNum++;
                 info = inputSec();
                 TIMER* timer = insertTimer(info.time);
                 timer->timerName = alarmNum;
                 timer->timeout_watcher.data = &(timer->timerName);
-                //fault
-                //*((int*)(timer->timeout_watcher.data)) = alarmNum;
                 repeat = isRepeat();
 
                 ev_timer_stop (loop, &timer->timeout_watcher);
-                if (repeat.isRepeat){
+                if (repeat.isRepeat)
                     ev_timer_init(&timer->timeout_watcher, timeout_cb, info.seconds, repeat.RepeatTime);
-                }
-                else{
+                else
                     ev_timer_init(&timer->timeout_watcher, timeout_cb, info.seconds, 0.);
-                }
                 ev_timer_start(loop, &timer->timeout_watcher);
             }
                 break;
@@ -88,11 +88,8 @@ int main(void){
                 printf("number = %hhd\n", number);
                 deleteTimer(number);
                 break;
-            case view:
+            case dump:
                 printList();
-                break;
-            case update:
-                ev_now_update (loop);
                 break;
             case quit:
                 puts("Quit!\n");
