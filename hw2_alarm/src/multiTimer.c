@@ -1,3 +1,4 @@
+#include "ev.h"
 #include "multiTimer.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ TIMER* insertTimer(TIME t){
 }
 
 /* delete */
-void deleteTimer(int num){
+void deleteTimer(EV_P_ int num){
     TIMER *current;
     TIMER *previous = NULL;
     if(front == NULL)
@@ -43,14 +44,15 @@ void deleteTimer(int num){
     else if(current == front){
         front = current->next;
         printf("Timer %hhd is deleted\n", current->timerName);
+        ev_timer_stop(EV_A_ &current->timeout_watcher);
         free(current);
     }
     else{
         previous->next = current->next;
         printf("Timer %hhd is deleted\n", current->timerName);
+        ev_timer_stop(EV_A_ &current->timeout_watcher);
         free(current);
     }
-    
 }
 
 void printList(void){

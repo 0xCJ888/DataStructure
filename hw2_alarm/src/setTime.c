@@ -153,7 +153,18 @@ REPEAT isRepeat(void){
 int selectDel(void){
     char ref;
     int timerSelect;
-    puts("Select which timer you want to delete");
+    puts("Which timer you want to delete?");
+    ref = scanf("%d", &timerSelect);
+    getchar();
+    if(ref == 0)
+        printf("Please input a integer\n");
+    return timerSelect;
+}
+
+int selectModify(void){
+    char ref;
+    int timerSelect;
+    puts("Which timer you want to modify?");
     ref = scanf("%d", &timerSelect);
     getchar();
     if(ref == 0)

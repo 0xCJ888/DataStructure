@@ -15,7 +15,7 @@ typedef struct timer{
 
 
 TIMER* insertTimer(TIME t);
-void deleteTimer(int num);
+void deleteTimer(EV_P_ int num);
 void printList(void);
 
 extern TIMER *front;
