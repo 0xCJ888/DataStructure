@@ -15,15 +15,16 @@ TIMER* insertTimer(TIME t){
         exit(1);
     }
     current->clock = t;
-    current->pnext = NULL;
+    current->next = NULL;
     if(rear == NULL)
-        front = current;
+        front =current;
     else
-        rear->pnext = current;
+        rear->next = current;
     rear = current;
     return current;
 }
 
+/* delete */
 void deleteTimer(int num){
     TIMER *current;
     TIMER *previous = NULL;
@@ -33,73 +34,34 @@ void deleteTimer(int num){
 
     while((current != NULL) && current->timerName != num){
         previous = current;
-        current = current->pnext;
+        current = current->next;
     }
 
     if (current == NULL)
         printf("There is no timer %d  can delete!\n", num);
-    /*TIMER */
+    /* first node */
     else if(current == front){
-        front = current->pnext;
+        front = current->next;
         printf("Timer %hhd is deleted\n", current->timerName);
         free(current);
     }
     else{
-        previous->pnext = current->pnext;
+        previous->next = current->next;
         printf("Timer %hhd is deleted\n", current->timerName);
         free(current);
     }
     
 }
 
-void sort(void){
-    TIMER *tail = front;
-    TIMER *tmp = front;
-    TIMER *current = front;
-    TIMER *prev = front;
-
-    int size = 0;
-    while(tail){
-        tail = tail->pnext;
-        size++; 
-    }
-    printf("size = %d\n", size);
-
-    for (int i = size; i > 0; i--){
-        current = front;
-        prev = front;
-        for(int j = 0; j < i - 1 && current->pnext; j++){
-            if(difftime(mktime(&current->pnext->clock), mktime(&current->clock)) > 0.){
-                tmp = current->pnext;
-                current->pnext = tmp->pnext;
-                tmp->pnext = current;
-                if(current == front){
-                    front = tmp;
-                    prev = tmp;
-                }
-                else{
-                    prev->pnext=tmp;
-                    prev = prev->pnext;
-                }
-            }
-            else{
-                current = current->pnext;
-                if(j!=0) prev = prev->pnext;
-            }   
-        }
-    }
-}
-
-/* sort by time */
 void printList(void){
     TIMER* point;
     point = front;
     if(point == NULL)
         puts("No Timer now!\n");
-    sort();
-    /* print timer */
-    for(; point != NULL; point = point->pnext){
+    puts("--------------------------------------------");
+    puts("Timer\t\trepeatTime(s)\t\ttime");
+    for(; point != NULL; point = point->next){
         time_t t = mktime(&point->clock);
-        printf("Timer %d set time is %s\n", point->timerName, ctime(&t));
+        printf("%d\t\t%d\t\t\t%s\n", point->timerName, point->repeat.RepeatTime, ctime(&t));
     }
 }

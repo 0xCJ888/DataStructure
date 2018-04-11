@@ -20,6 +20,5 @@ typedef struct repeat{
 INFO inputSec(void);
 REPEAT isRepeat(void);
 int selectDel(void);
-int selectModify(void);
 
 #endif

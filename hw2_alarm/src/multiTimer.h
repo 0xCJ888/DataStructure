@@ -6,16 +6,16 @@
 #include <time.h>
 
 typedef struct timer{
-    int timerName;
+    unsigned int timerName;
     TIME clock;
+    REPEAT repeat;
     ev_timer timeout_watcher;
-    struct timer *pnext;
+    struct timer *next;
 }TIMER;
 
 
 TIMER* insertTimer(TIME t);
 void deleteTimer(int num);
-void sort();
 void printList(void);
 
 extern TIMER *front;

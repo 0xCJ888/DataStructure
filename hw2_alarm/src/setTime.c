@@ -160,14 +160,3 @@ int selectDel(void){
         printf("Please input a integer\n");
     return timerSelect;
 }
-
-int selectModify(void){
-    char ref;
-    int timerSelect;
-    puts("Which timer you want to modify?");
-    ref = scanf("%d", &timerSelect);
-    getchar();
-    if(ref == 0)
-        printf("Please input a integer\n");
-    return timerSelect;
-}
