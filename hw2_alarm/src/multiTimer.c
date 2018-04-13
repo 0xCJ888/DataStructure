@@ -8,50 +8,70 @@
 TIMER *front = NULL;
 TIMER *rear = NULL;
 
-/* insert at the rear */
+/* insert */
 TIMER* insertTimer(TIME t){
-    TIMER *current = (TIMER*) malloc(sizeof(TIMER));
-    if(current == NULL){
+    TIMER *addNewTimer = (TIMER*) malloc(sizeof(TIMER));
+    if(!addNewTimer){
         fprintf(stderr, "Error: unable to allocate required memory\n");
         exit(1);
     }
-    current->clock = t;
-    current->next = NULL;
-    if(rear == NULL)
-        front =current;
-    else
-        rear->next = current;
-    rear = current;
-    return current;
+    addNewTimer->clock = t;
+    addNewTimer->next = NULL;
+
+    TIMER *tmp = front;
+    TIMER *prev = NULL;
+
+    /* insertion sort */
+    for(;tmp && (mktime(&tmp->clock) < mktime(&t));){
+        prev = tmp;
+        tmp = tmp->next;
+    }
+
+    /* insertfront */
+    if(!prev){
+        addNewTimer->next = front;
+        front = addNewTimer;
+    }
+    /* insert */
+    else{
+        if(!tmp){   //append 
+            prev->next = addNewTimer;
+        }
+        else{   //insertAfter
+            addNewTimer->next = tmp;
+            prev->next = addNewTimer;
+        }
+    }
+    return addNewTimer;
 }
 
 /* delete */
 void deleteTimer(EV_P_ int num){
-    TIMER *current;
+    TIMER *addNewTimer;
     TIMER *previous = NULL;
     if(front == NULL)
         printf("Timer is empty\n");
-    current = front;
+    addNewTimer = front;
 
-    while((current != NULL) && current->timerName != num){
-        previous = current;
-        current = current->next;
+    while((addNewTimer != NULL) && addNewTimer->timerName != num){
+        previous = addNewTimer;
+        addNewTimer = addNewTimer->next;
     }
 
-    if (current == NULL)
+    if (addNewTimer == NULL)
         printf("There is no timer %d  can delete!\n", num);
     /* first node */
-    else if(current == front){
-        front = current->next;
-        printf("Timer %hhd is deleted\n", current->timerName);
-        ev_timer_stop(EV_A_ &current->timeout_watcher);
-        free(current);
+    else if(addNewTimer == front){
+        front = addNewTimer->next;
+        printf("Timer %hhd is deleted\n", addNewTimer->timerName);
+        ev_timer_stop(EV_A_ &addNewTimer->timeout_watcher);
+        free(addNewTimer);
     }
     else{
-        previous->next = current->next;
-        printf("Timer %hhd is deleted\n", current->timerName);
-        ev_timer_stop(EV_A_ &current->timeout_watcher);
-        free(current);
+        previous->next = addNewTimer->next;
+        printf("Timer %hhd is deleted\n", addNewTimer->timerName);
+        ev_timer_stop(EV_A_ &addNewTimer->timeout_watcher);
+        free(addNewTimer);
     }
 }
 
