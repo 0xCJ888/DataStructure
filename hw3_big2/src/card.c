@@ -14,15 +14,15 @@ void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum){
     else if(*suitNum == 3)
         cx = snprintf(text, textSize, "%s", "S");
     
-    *rankNum = cardNum / 4;
-    if(*rankNum == 0)
-        snprintf(text+cx, textSize, "%s", "A");
-    else if(*rankNum == 10)
+    *rankNum = cardNum / 4;    
+    if(*rankNum == 10)
         snprintf(text+cx, textSize, "%s", "J");
     else if(*rankNum == 11)
         snprintf(text+cx, textSize, "%s", "Q");
     else if(*rankNum == 12)
         snprintf(text+cx, textSize, "%s", "K");
+    else if(*rankNum == 13)
+        snprintf(text+cx, textSize, "%s", "A");
     else
         snprintf(text+cx, textSize, "%d", *rankNum+1);
 }
