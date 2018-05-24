@@ -8,27 +8,17 @@
 
 
 #define totalCardNum 52
-#define wishTime 10000
 #define textSize 3
-
-#define swap(a,b)            \
-    do{                      \
-        Card tmp;            \
-        tmp = a;             \
-        a = b;               \
-        b = tmp;             \
-    }while(0)
 
 typedef struct card Card;
 struct card{
-    char suit;
-    char suitName;
+    char suitNum;
+    char suitName[3];
     char suitSymbol;
+    char value;
     char rankNum;
-    char rankName;
 };
 
-Card* shuffle(void);
-void cardtext(char card, char* text);
+void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum);
 
 #endif
