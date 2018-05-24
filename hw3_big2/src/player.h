@@ -1,7 +1,9 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include "stdint.h"
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include "card.h"
 
 #define cardNum 13
@@ -17,10 +19,12 @@ struct player{
     Card hand[cardNum];
 };
 
-void findPair(void);
-void findFullHouse(void);
-void findFourOfAKind(void);
-void findStraight(void);  //no JQKA2、QKA23、KA234
-void findStraightFlush(void);
+void deal(Player *player, redisContext *c);
+void cardInHand(Player *player, redisContext *c);
+void findPair(Player *player, redisContext *c);
+void findFullHouse(Player *player, redisContext *c);
+void findFourOfAKind(Player *player, redisContext *c);
+void findStraight(Player *player, redisContext *c);  //no JQKA2、QKA23、KA234
+void findStraightFlush(Player *player, redisContext *c);
 
 #endif

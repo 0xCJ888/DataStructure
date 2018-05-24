@@ -1,5 +1,17 @@
 #include "card.h"
-//wchar_t suitSym[4] = {'\u2660','\u2665','\u2666','\u2663'};
+
+void createCards(redisContext *c){
+    for(int i = 4; i < 56; i++){
+        redisCommand(c, "SADD deck %d", i);
+    }
+}
+
+void checkDeck(redisContext *c){
+    redisReply *reply;
+    reply = redisCommand(c,"sunionstore game:deck deck");
+    printf("sunionstore : %lld\n", reply->integer);
+    freeReplyObject(reply);
+}
 
 void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum){
     char cx; 

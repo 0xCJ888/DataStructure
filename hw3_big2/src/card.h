@@ -3,9 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include <wchar.h>
-
+#include "hiredis.h"
 
 #define totalCardNum 52
 #define textSize 3
@@ -19,6 +17,8 @@ struct card{
     char rankNum;
 };
 
+void createCards(redisContext *c);
+void checkDeck(redisContext *c);
 void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum);
 
 #endif
