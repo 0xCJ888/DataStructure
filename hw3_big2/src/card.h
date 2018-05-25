@@ -11,7 +11,7 @@
 typedef struct card Card;
 struct card{
     char suitNum;
-    char suitName[3];
+    char suitName[4];
     char suitSymbol;
     char value;
     char rankNum;

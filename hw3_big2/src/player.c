@@ -17,13 +17,14 @@ void deal(Player *player, redisContext *c){
 
 void cardInHand(Player *player, redisContext *c){
     redisReply *reply;
-    puts("ZRANGE");
-    reply = redisCommand(c, "ZRANGE %s 0 -1 WITHSCORES", player->playerName);
+    printf("Cards in  %s\n", player->playerName);
+    reply = redisCommand(c, "ZRANGE %s 0 -1", player->playerName);
     if(reply->type == REDIS_REPLY_ARRAY){
         for(int j = 0; j < reply->elements; j++){
-            printf("%u) %s\n", j, reply->element[j]->str);
+            printf("%u) %s\t", j, reply->element[j]->str);
         }
     }
+    puts("\n");
     freeReplyObject(reply);
 }
 

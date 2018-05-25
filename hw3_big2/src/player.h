@@ -15,7 +15,7 @@
 typedef struct player Player;
 
 struct player{
-    char playerName[7];
+    char playerName[8];
     Card hand[cardNum];
 };
 
