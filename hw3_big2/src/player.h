@@ -13,6 +13,8 @@
 #define TRIPLE 3
 #define QUAD 4
 #define ELEMENNT 4
+#define FULLHOUSE 5
+#define FOUROFKIND 6
 
 typedef struct player Player;
 
@@ -24,10 +26,10 @@ struct player{
 
 void deal(Player *player, redisContext *c);
 void cardInHand(Player *player, redisContext *c);
-void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t num);
-void findListRangeOne(redisContext *c, const uint8_t num, char *s);
-void findListRangeTwo(redisContext *c, const uint8_t num, char *s);
 void findMultiCards(Player *player, redisContext *c, const uint8_t num);
+void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t num);
+void printList(Player *player, redisContext *c, const uint8_t num);
+void findPair(Player *player, redisContext *c);
 void findFullHouse(Player *player, redisContext *c);
 void findFourOfAKind(Player *player, redisContext *c);
 void findStraight(Player *player, redisContext *c);  //no JQKA2、QKA23、KA234

@@ -38,3 +38,12 @@ void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum){
     else
         snprintf(text+cx, textSize, "%d", *rankNum+1);
 }
+
+uint8_t findcardNum(char *text){
+    return (text[1] == 'A') ? 13
+         : (text[1] == 'K') ? 12
+         : (text[1] == 'Q') ? 11
+         : (text[1] == 'J') ? 10
+         : (text[1] == '1') ? 9
+         : (int)text[1] - '0' - 1;
+}

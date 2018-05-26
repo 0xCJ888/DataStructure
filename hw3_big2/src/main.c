@@ -30,6 +30,7 @@ int main(){
                                     [3] = { .playerName = "PlayerD"}};
         redisContext *c = redisConnect("127.0.0.1", 6379);
         checkConnection(c);
+        redisCommand(c, "flushall");
 
         createCards(c);
         checkDeck(c);
@@ -38,20 +39,18 @@ int main(){
             deal(&player[i], c);
             cardInHand(&player[i], c);
                 
-            puts("find pair");
-            findMultiCards(&player[i], c, PAIR);
-            puts("RANGE");
-            redisReply *replyLRANGE = redisCommand(c, "LRANGE %sPAIR %d %d", player[i].playerName, 0, -1);
-            if(replyLRANGE->type == REDIS_REPLY_ARRAY){
-                for(int j = 0; j < replyLRANGE->elements; j++){
-                    printf("%s\n", replyLRANGE->element[j]->str);
-                }
-            }
+            findPair(&player[i], c);
+            puts("Pair");
+            printList(&player[i], c, PAIR);
+            findFullHouse(&player[i], c);
+            puts("FULLHOUSE");
+            printList(&player[i], c, FULLHOUSE);
+            findFourOfAKind(&player[i], c);
+            puts("FOUROFKIND");
+            printList(&player[i], c, FOUROFKIND);
             //findStraight(&player[i], c);
         }
 
-        /* clean all */
-        redisCommand(c, "flushall");
         redisFree(c);
 
         /* kill daemon */
