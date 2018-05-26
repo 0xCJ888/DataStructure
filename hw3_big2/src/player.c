@@ -12,7 +12,6 @@ void deal(Player *player, redisContext *c){
             redisCommand(c, "ZADD %s %d %s", player->playerName, player->hand[j].rankNum, player->hand[j].suitName); // sorted set
         }
     }
-    freeReplyObject(reply);
 }
 
 void cardInHand(Player *player, redisContext *c){
@@ -25,42 +24,76 @@ void cardInHand(Player *player, redisContext *c){
         }
     }
     puts("\n");
-    freeReplyObject(reply);
 }
 
-void findPair(Player *player, redisContext *c){
+void findMultiCards(Player *player, redisContext *c, const uint8_t num){
     redisReply *reply;
-    puts("find pair triple quad");
     for(int j = 1; j < cardNum + 1; j++){
         reply = redisCommand(c, "ZRANGEBYSCORE %s %d (%d", player->playerName, j, j+1);
-        if(reply->type == REDIS_REPLY_ARRAY){
-            /* find pair */
-            if(reply->elements >= PAIR){
-                printf("pair : number %d\n", j);
-                for(int k = 0; k < reply->elements; k++){
-                    printf("%u) %s\t", k, reply->element[k]->str);
-                }
-                puts("\n");
+        findList(player, reply, c, num);
+    }
+}
+
+void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t num){
+    char Pair[2][4];
+    if(reply->type == REDIS_REPLY_ARRAY){
+        if(reply->elements >= num){
+            uint8_t diff = reply->elements - num;
+            for(int i = 0; i < reply->elements; i++){
+                printf("%u) %s\t", i, reply->element[i]->str);
+                redisCommand(c, "LPUSH CONBI %s", reply->element[i]->str);
             }
-            /* find triple */
-            if(reply->elements >= TRIPLE){
-                printf("triple : number %d\n", j);
-                for(int k = 0; k < reply->elements; k++){
-                    printf("%u) %s\t", k, reply->element[k]->str);
+            puts("\n");
+            if(diff == 1){
+                for(int i = 0; i < reply->elements; i++){
+                    if(i == reply->elements - 1){
+                        findListRangeOne(c, i, Pair[0]);
+                        findListRangeOne(c, i - reply->elements + 1, Pair[1]);
+                    }
+                    else{
+                        findListRangeTwo(c, i, Pair[0]);
+                    }
+                    redisCommand(c, "LPUSH %sPAIR %s\t%s", player->playerName, Pair[0], Pair[1]);
                 }
-                puts("\n");
             }
-            /* find quad */
-            if(reply->elements >= QUAD){
-                printf("Quad : number %d\n", j);
-                for(int k = 0; k < reply->elements; k++){
-                    printf("%u) %s\t", k, reply->element[k]->str);
+            else if(diff == 2){
+                char combination[4][4];
+                findListRangeOne(c, 0, combination[0]);
+                findListRangeOne(c, 1, combination[1]);
+                findListRangeOne(c, 2, combination[2]);
+                findListRangeOne(c, 3, combination[3]);
+                for(int i = 0; i < reply->elements-1; i++){
+                    for(int j = i+1; j < reply->elements; j++){
+                        redisCommand(c, "LPUSH %sPAIR %s\t%s", player->playerName, combination[i], combination[j]);
+                    }
                 }
-                puts("\n");
             }
+            else{
+                findListRangeTwo(c, 0, Pair[0]);
+                redisCommand(c, "LPUSH %sPAIR %s\t%s", player->playerName, Pair[0], Pair[1]);
+            }
+            redisCommand(c, "DEL CONBI ");
+            puts("\n");
         }
     }
-    freeReplyObject(reply);
+}
+
+void findListRangeOne(redisContext *c, const uint8_t num, char *s){
+    redisReply *replyLRANGE = redisCommand(c, "LRANGE CONBI %d %d", num, num);
+    if(replyLRANGE->type == REDIS_REPLY_ARRAY){
+        for(int j = 0; j < replyLRANGE->elements; j++){
+            memcpy(s, replyLRANGE->element[j]->str, strlen(replyLRANGE->element[j]->str) + 1);
+        }
+    }
+}
+
+void findListRangeTwo(redisContext *c, const uint8_t num, char *s){
+    redisReply *replyLRANGE = redisCommand(c, "LRANGE CONBI %d %d", num, num+1);
+    if(replyLRANGE->type == REDIS_REPLY_ARRAY){
+        for(int j = 0; j < replyLRANGE->elements; j++){
+            memcpy(s + j * 4, replyLRANGE->element[j]->str, strlen(replyLRANGE->element[j]->str) + 1);
+        }
+    }
 }
 
 void findStraight(Player *player, redisContext *c){
@@ -87,6 +120,5 @@ void findStraight(Player *player, redisContext *c){
             }
         }
     }
-    freeReplyObject(reply);
-    freeReplyObject(replyZCOUNT);
 }
+
