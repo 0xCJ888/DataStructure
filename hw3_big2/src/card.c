@@ -47,3 +47,11 @@ uint8_t findcardNum(char *text){
          : (text[1] == '1') ? 9
          : (int)text[1] - '0' - 1;
 }
+
+uint8_t findcardSuit(char *text){
+    return (text[0] == 'C') ? 1
+         : (text[0] == 'D') ? 2
+         : (text[0] == 'H') ? 3
+         : (text[0] == 'S') ? 4
+         : 0;
+}

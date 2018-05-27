@@ -11,7 +11,7 @@ all:build bin
 build:${OUTPUT}
 
 ${OUTPUT}:${SRC} ${HEADER}
-	$(CC) $(CFLAG) $(SRC) -o ${OUTPUT} -I${LIBDIR} -L${LIBDIR} -lhiredis
+	$(CC) $(CFLAG) $(SRC) -o ${OUTPUT} -I${LIBDIR} -L${LIBDIR} -lhiredis -D _BSD_SOURCE
 
 bin:
 	mkdir bin

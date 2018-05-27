@@ -15,6 +15,8 @@
 #define ELEMENNT 4
 #define FULLHOUSE 5
 #define FOUROFKIND 6
+#define STRAIGHT 7
+#define STRAIGHTFLUSH 8
 
 typedef struct player Player;
 
@@ -29,6 +31,8 @@ void cardInHand(Player *player, redisContext *c);
 void findMultiCards(Player *player, redisContext *c, const uint8_t num);
 void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t num);
 void printList(Player *player, redisContext *c, const uint8_t num);
+void straightCombination(Player *player, redisContext *c, redisReply *reply, uint8_t *straightNum);
+void delStraightCombination(Player *player, redisContext *c);
 void findPair(Player *player, redisContext *c);
 void findFullHouse(Player *player, redisContext *c);
 void findFourOfAKind(Player *player, redisContext *c);

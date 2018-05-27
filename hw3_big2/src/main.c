@@ -48,7 +48,13 @@ int main(){
             findFourOfAKind(&player[i], c);
             puts("FOUROFKIND");
             printList(&player[i], c, FOUROFKIND);
-            //findStraight(&player[i], c);
+            puts("STRAIGHT");
+            findStraight(&player[i], c);
+            printList(&player[i], c, STRAIGHT);
+            puts("STRAIGHTFULSH");
+            findStraightFlush(&player[i], c);
+            printList(&player[i], c, STRAIGHTFLUSH);
+            puts("");
         }
 
         redisFree(c);

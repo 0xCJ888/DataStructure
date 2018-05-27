@@ -17,7 +17,7 @@ void cardInHand(Player *player, redisContext *c){
     printf("Cards in  %s\n", player->playerName);
     reply = redisCommand(c, "ZRANGE %s 0 -1", player->playerName);
     for(int j = 0; j < reply->elements; j++){
-        printf("%u) %s\t", j, reply->element[j]->str);
+        printf("%u) %s\t", j+1, reply->element[j]->str);
     }
     puts("\n");
 }
@@ -61,9 +61,58 @@ void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t 
 }
 
 void printList(Player *player, redisContext *c, const uint8_t num){
-    redisReply *replyZRANGE = redisCommand(c, "ZRANGE %s%d %d %d", player->playerName, num, 0, -1);
-    for(int i = 0; i < replyZRANGE->elements; i++){
-        printf("%s\n", replyZRANGE->element[i]->str);
+    redisReply *replyZCARD = redisCommand(c, "ZCARD %s%d", player->playerName, num);
+    if(replyZCARD->integer){
+        redisReply *replyZRANGE = redisCommand(c, "ZRANGE %s%d %d %d", player->playerName, num, 0, -1);
+        for(int i = 0; i < replyZRANGE->elements; i++){
+            printf("%d)\t%s\n", i+1, replyZRANGE->element[i]->str);
+        }
+    }
+    else{
+        puts("NULL");
+    }
+    puts("");
+}
+
+void straightCombination(Player *player, redisContext *c, redisReply *reply, uint8_t *straightNum){
+    uint8_t cardSuit[5];
+    uint8_t isStraightFlush = 0;
+    redisReply *replyi, *replyj, *replyk, *replym, *replyn;
+    for(int i = 0; i < straightNum[0]; i++){
+        replyi = redisCommand(c, "RPOPLPUSH %s%d%d %s%d%d", player->playerName, STRAIGHT, 0, player->playerName, STRAIGHT, 0);
+        cardSuit[0] = findcardSuit(replyi->str);
+        for(int j = 0; j < straightNum[1]; j++){
+            replyj = redisCommand(c, "RPOPLPUSH %s%d%d %s%d%d", player->playerName, STRAIGHT, 1, player->playerName, STRAIGHT, 1);
+            cardSuit[1] = findcardSuit(replyj->str);
+            for(int k = 0; k < straightNum[2]; k++){
+                replyk = redisCommand(c, "RPOPLPUSH %s%d%d %s%d%d", player->playerName, STRAIGHT, 2, player->playerName, STRAIGHT, 2);
+                cardSuit[2] = findcardSuit(replyk->str);
+                for(int m = 0; m < straightNum[3]; m++){
+                    replym = redisCommand(c, "RPOPLPUSH %s%d%d %s%d%d", player->playerName, STRAIGHT, 3, player->playerName, STRAIGHT, 3);
+                    cardSuit[3] = findcardSuit(replym->str);
+                    for(int n = 0; n < straightNum[4]; n++){
+                        replyn = redisCommand(c, "RPOPLPUSH %s%d%d %s%d%d", player->playerName, STRAIGHT, 4, player->playerName, STRAIGHT, 4);
+                        cardSuit[4] = findcardSuit(replyn->str);
+                        for(int z = 1; z < 5; z++){
+                            if(cardSuit[z] != cardSuit[0]){
+                                isStraightFlush = 0;
+                                break;
+                            }
+                            else
+                                isStraightFlush = 1;
+                        }
+                        redisCommand(c, "ZADD %s%d %d %s\t%s\t%s\t%s\t%s", player->playerName, STRAIGHT, isStraightFlush, replyi->str, replyj->str, replyk->str, replym->str, replyn->str);
+                    }
+                }
+            }
+        }
+    }
+    delStraightCombination(player, c);
+}
+
+void delStraightCombination(Player *player, redisContext *c){
+    for(int i = 0; i < 5; i++){
+        redisCommand(c, "DEL %s%d%d", player->playerName, STRAIGHT, i);
     }
 }
 
@@ -112,31 +161,39 @@ void findFourOfAKind(Player *player, redisContext *c){
 }
 
 void findStraight(Player *player, redisContext *c){
-    redisReply *reply, *replyZCOUNT;
+    redisReply *reply, *replyZCOUNT, *replyZRANGE;
     bool isStraight = true;
+    uint8_t straightNum[5] = {0};
 
-    puts("find stright");
     for(int j = 1; j < 10; j++){
         reply = redisCommand(c, "ZRANGEBYSCORE %s %d (%d", player->playerName, j, j + 5);
         if(reply->elements >= 5){
             for(int k = j; k < j + 5; k++){
+                replyZRANGE = redisCommand(c, "ZRANGEBYSCORE %s %d (%d", player->playerName, k, k+1);
+                for(int m = 0; m < replyZRANGE->elements; m++){
+                    redisCommand(c, "LPUSH %s%d%d %s", player->playerName, STRAIGHT, k-j, replyZRANGE->element[m]->str);
+                }
                 replyZCOUNT = redisCommand(c, "ZCOUNT %s %d (%d", player->playerName, k, k+1);
+                straightNum[k - j] = replyZCOUNT->integer;
                 if(!replyZCOUNT->integer){
+                    delStraightCombination(player, c);
                     isStraight = false;
                     break;
                 }
             }
             if(isStraight){
-                printf("straight : number %d\n", j);
-                for(int k = 0; k < reply->elements; k++){
-                    printf("%u) %s\t", k, reply->element[k]->str);
-                }
-                puts("\n");
+                straightCombination(player, c, reply, straightNum);
             }
         }
     }
 }
 
 void findStraightFlush(Player *player, redisContext *c){
-    
+    uint8_t isStrightFlush;
+    redisReply *replyZRANGE = redisCommand(c, "ZRANGE %s%d %d %d WITHSCORES", player->playerName, STRAIGHT, 0, -1);
+    for(int i = 0; i < replyZRANGE->elements; i+=2){
+        isStrightFlush = atoi(replyZRANGE->element[i+1]->str);
+        if(isStrightFlush)
+            redisCommand(c, "ZADD %s%d %d %s", player->playerName, STRAIGHTFLUSH, isStrightFlush, replyZRANGE->element[i]->str);
+    }
 }
