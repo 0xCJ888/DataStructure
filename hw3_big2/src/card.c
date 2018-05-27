@@ -6,11 +6,8 @@ void createCards(redisContext *c){
     }
 }
 
-void checkDeck(redisContext *c){
-    redisReply *reply;
-    reply = redisCommand(c,"sunionstore game:deck deck");
-    printf("sunionstore : %lld\n", reply->integer);
-    freeReplyObject(reply);
+void unionDeck(redisContext *c){
+    redisCommand(c,"sunionstore game:deck deck");
 }
 
 void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum){
@@ -54,4 +51,22 @@ uint8_t findcardSuit(char *text){
          : (text[0] == 'H') ? 3
          : (text[0] == 'S') ? 4
          : 0;
+}
+
+void text2Unicode(char *text){
+    char *pText = text;
+    do{
+        if(*pText == 'C')
+            printf("%s", "\e[3;30;47m♣\e[0m");
+        else if(*pText == 'D')
+            printf("%s", "\e[2;31;47m♦\e[0m");
+        else if(*pText == 'H')
+            printf("%s", "\e[2;31;47m♥\e[0m");
+        else if(*pText == 'S')
+            printf("%s", "\e[2;30;47m♠\e[0m");
+        else if(*pText == '\t')
+            printf("%c", '\t');
+        else
+            printf("\e[3;30;47m%c\e[0m", *pText);
+    }while(*++pText);
 }

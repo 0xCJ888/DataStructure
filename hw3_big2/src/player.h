@@ -31,7 +31,7 @@ void cardInHand(Player *player, redisContext *c);
 void findMultiCards(Player *player, redisContext *c, const uint8_t num);
 void findList(Player *player, redisReply *reply, redisContext *c, const uint8_t num);
 void printList(Player *player, redisContext *c, const uint8_t num);
-void straightCombination(Player *player, redisContext *c, redisReply *reply, uint8_t *straightNum);
+void straightCombination(Player *player, redisContext *c, uint8_t *straightNum);
 void delStraightCombination(Player *player, redisContext *c);
 void findPair(Player *player, redisContext *c);
 void findFullHouse(Player *player, redisContext *c);

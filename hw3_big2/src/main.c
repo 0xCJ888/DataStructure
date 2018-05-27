@@ -33,7 +33,7 @@ int main(){
         redisCommand(c, "flushall");
 
         createCards(c);
-        checkDeck(c);
+        unionDeck(c);
 
         for(int i = 0; i < playerNum; i++){
             deal(&player[i], c);

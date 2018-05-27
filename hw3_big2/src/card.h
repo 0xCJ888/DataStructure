@@ -18,9 +18,10 @@ struct card{
 };
 
 void createCards(redisContext *c);
-void checkDeck(redisContext *c);
+void unionDeck(redisContext *c);
 void cardtext(const char cardNum, char *text, char *suitNum, char *rankNum);
 uint8_t findcardNum(char *text);
 uint8_t findcardSuit(char *text);
+void text2Unicode(char *text);
 
 #endif

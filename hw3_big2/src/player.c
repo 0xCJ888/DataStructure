@@ -17,7 +17,9 @@ void cardInHand(Player *player, redisContext *c){
     printf("Cards in  %s\n", player->playerName);
     reply = redisCommand(c, "ZRANGE %s 0 -1", player->playerName);
     for(int j = 0; j < reply->elements; j++){
-        printf("%u) %s\t", j+1, reply->element[j]->str);
+        printf("%u) ", j+1);
+        text2Unicode(reply->element[j]->str);
+        printf("\t");
     }
     puts("\n");
 }
@@ -65,16 +67,18 @@ void printList(Player *player, redisContext *c, const uint8_t num){
     if(replyZCARD->integer){
         redisReply *replyZRANGE = redisCommand(c, "ZRANGE %s%d %d %d", player->playerName, num, 0, -1);
         for(int i = 0; i < replyZRANGE->elements; i++){
-            printf("%d)\t%s\n", i+1, replyZRANGE->element[i]->str);
+            printf("%d)\t", i+1);
+            text2Unicode(replyZRANGE->element[i]->str);
+            puts("");
         }
     }
     else{
-        puts("NULL");
+        puts("Empty");
     }
     puts("");
 }
 
-void straightCombination(Player *player, redisContext *c, redisReply *reply, uint8_t *straightNum){
+void straightCombination(Player *player, redisContext *c, uint8_t *straightNum){
     uint8_t cardSuit[5];
     uint8_t isStraightFlush = 0;
     redisReply *replyi, *replyj, *replyk, *replym, *replyn;
@@ -182,7 +186,7 @@ void findStraight(Player *player, redisContext *c){
                 }
             }
             if(isStraight){
-                straightCombination(player, c, reply, straightNum);
+                straightCombination(player, c, straightNum);
             }
         }
     }
