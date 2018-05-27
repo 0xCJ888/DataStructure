@@ -6,7 +6,7 @@ CFLAG = -std=c99 -Wall
 LIBDIR = hiredis
 
 
-all:build bin
+all:bin build 
 
 build:${OUTPUT}
 
