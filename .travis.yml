@@ -1,6 +1,5 @@
 language: c
 compiler: gcc
 script:
-    - cd hw2_alarm
-    - cmake .
+    - cd hw3_big2
     - make

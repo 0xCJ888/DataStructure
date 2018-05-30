@@ -18,6 +18,6 @@ TIMER* insertTimer(TIME t);
 void deleteTimer(EV_P_ int num);
 void printList(void);
 
-extern TIMER *front;
-extern TIMER *rear;  
+//extern TIMER *front;
+//extern TIMER *rear;  
 #endif
