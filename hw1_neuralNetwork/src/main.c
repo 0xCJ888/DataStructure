@@ -1,63 +1,56 @@
 #include "NN.h"
 
 int main(){
-    int i =0;
-    Data data[DATA_SIZE];
-    DataDouble t[DATA_SIZE];
+    int i = 0;
+    int count = 0;
+    double output;
+    double outputErr;
+    double err;
+
+    /* open and read file */
+    Data data[INPUT_NUMBER];
     FILE * pFile;
-    pFile = fopen ("input.txt","r");
+    pFile = fopen ("./src/input.txt","r");
     if (pFile == NULL){
-      printf("Files DOES NOT EXISTS!");
+        printf("Files DOES NOT EXISTS!");
     }
-    while(fscanf(pFile,"%d %d %d", &data[i].inputs[0], &data[i].inputs[1], &data[i].result)!=EOF){
-      t[i].inputs[0] =(double) data[i].inputs[0];
-      t[i].inputs[1] =(double) data[i].inputs[1];
-      t[i].result =(double) data[i].result;
-      i++;
+    while(fscanf(pFile,"%d %d %d", &data[i].inputs[0], &data[i].inputs[1], &data[i].result)!=EOF)
+        i++;
+    
+    /* init weight and bias (random) */
+    Neuron intermediateLayers[NEURON_SIZE];
+    for (int i = 0; i < NEURON_SIZE; i++)
+        initNeuron(&intermediateLayers[i]);
+    Neuron outputLayers;
+    initNeuron(&outputLayers);
+    
+    for (int t = 0; t < INPUT_NUMBER; t++){
+        printf("\n %d) %d XOR %d ", count+1, data[count].inputs[0], data[count].inputs[1]);
+        
+        do{
+            /* forward */
+            for (int i = 0; i < NEURON_SIZE; i++){
+                Neuron *l = &intermediateLayers[i];
+                for (int j = 0; j < NEURON_SIZE; j++){
+                    l->inputs[j] = data[count].inputs[j];
+                }
+                outputLayers.inputs[i] = forward(l);
+            }
+            output = forward(&outputLayers);
+
+            /* backward */
+            outputErr = SIGMOID_DERIV(output) * (data[count].result - output);
+            backward(&outputLayers, outputErr);
+            for (int i = 0; i < NEURON_SIZE; i++){
+                err = SIGMOID_DERIV(outputLayers.inputs[i]) * outputErr * outputLayers.weights[i];
+                backward(&intermediateLayers[i], err);
+            }
+
+        }while(outputErr > 0.001 || outputErr < -0.001);
+        printf("= %d(except value) %f(real value) => ERR:%f", data[count].result, output, outputErr);
+        count++;
     }
-
-  /* init weight and bias (random) */
-  Neuron intermediateNeurons[NEURON_SIZE]; 
-  for (int i = 0; i < NEURON_SIZE; i++)
-    initNeuron(&intermediateNeurons[i]);
-  Neuron outputNeuron;
-  initNeuron(&outputNeuron);
-
-  int count = 0;
-
-  for (int epoch = 0; epoch < 4000; epoch++){
-    if(count == 4) count = 0;
-
-    /* forward */
-    for (int i = 0; i < NEURON_SIZE; i++){
-      Neuron *l = &intermediateNeurons[i];
-      for (int j = 0; j < NEURON_SIZE; j++)
-        l->inputs[j] = t[count].inputs[j];
-      outputNeuron.inputs[i] = forward(l);
-    }
-    double output = forward(&outputNeuron);
-
-    /* backward */
-    double outputErr = SIGMOID_DERIV(output) * (t[count].result - output);
-    backward(&outputNeuron, outputErr);
-    for (int i = 0; i < NEURON_SIZE; i++){
-      double err = SIGMOID_DERIV(outputNeuron.inputs[i]) * outputErr * outputNeuron.weights[i];
-      backward(&intermediateNeurons[i], err);
-    }
-    count++;
-  }
-  /* display */
-  for(int count = 0; count < DATA_SIZE; count++){
-    for (int i = 0; i < NEURON_SIZE; i++){
-      Neuron *l = &intermediateNeurons[i];
-      for (int j = 0; j < NEURON_SIZE; j++)
-         l->inputs[j] = t[count].inputs[j];
-      outputNeuron.inputs[i] = forward(l);
-    }
-    double output = forward(&outputNeuron);
-    printf("\n%d XOR %d = %d ", (int)t[count].inputs[0], (int)t[count].inputs[1], (int)t[count].result);
-    printf("= %d(%d) %f(ERR:%f)", output > 0.5, (int)t[count].result, output, t[count].result - output);
-  }
-  getchar();
-  return 0;
+    
+    getchar();
+    return 0;
 }
