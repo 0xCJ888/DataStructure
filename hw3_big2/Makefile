@@ -1,9 +1,9 @@
 CC = gcc
 SRC = src/main.c src/card.c src/player.c
 HEADER = src/card.h src/player.h
-OUTPUT = bin/test
+OUTPUT = bin/big2
 CFLAG = -std=c99 -Wall
-LIBDIR = hiredis
+LIBDIR = lib/hiredis
 
 
 all:bin build 
@@ -18,4 +18,4 @@ bin:
 
 .PHONY: clean
 clean:
-	rm -rf bin/test
+	rm -rf ${OUTPUT}

@@ -51,7 +51,7 @@ int main(){
             puts("STRAIGHT");
             findStraight(&player[i], c);
             printList(&player[i], c, STRAIGHT);
-            puts("STRAIGHTFULSH");
+            puts("STRAIGHTFLUSH");
             findStraightFlush(&player[i], c);
             printList(&player[i], c, STRAIGHTFLUSH);
             puts("");
