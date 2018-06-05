@@ -46,7 +46,7 @@ static void stdin_readable_cb (EV_P_ ev_io *w, int revents){
     switch(number){
         case update:
             number = selectDel();
-            //deleteTimer(number);
+            deleteTimer(alarmLoop, number);
         case insert:
             alarmNum++;
             info = inputSec();
