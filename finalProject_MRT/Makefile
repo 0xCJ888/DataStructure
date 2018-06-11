@@ -1,18 +1,16 @@
 CC = gcc
 SRC = src/main.c src/dataProcess.c
 HEADER = src/dataProcess.h
-OUTPUT = bin/MRT
-CFLAG = -std=c99 -Wall
+OUTPUT = build/MRT
+CFLAG = -std=gnu99 -Wall -g 
 
-all:bin build 
-
-build:${OUTPUT}
+all:${OUTPUT} build 
 
 ${OUTPUT}:${SRC} ${HEADER}
-	$(CC) $(CFLAG) $(SRC) -o ${OUTPUT}
+	$(CC) $(CFLAG) $(SRC) -o ${OUTPUT} 
 
-bin:
-	mkdir bin
+build:
+	mkdir build
 
 .PHONY: clean
 clean:
