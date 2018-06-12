@@ -6,11 +6,12 @@
 #include <stdint.h>
 #include <limits.h>
 
-#define stationNum 108
+#define stationNum 140
 
 
 typedef struct _feildData FeildData;
 typedef struct _twoDArray TwoDArray;
+
 struct _feildData{
     uint8_t from;
     uint8_t to;
@@ -26,5 +27,7 @@ void setTimeField(FILE** pFile, TwoDArray* Distance, TwoDArray* Predecessor);
 void initTimeData(TwoDArray* twoDArray);
 void initInterData(TwoDArray* twoDArray);
 void printArrayData(TwoDArray* twoDArray);
+void FloydWarshall(TwoDArray* Distance, TwoDArray* Predecessor);
+void findShortestPath(TwoDArray* Predecessor, uint8_t from, uint8_t to);
 
 #endif //__DATAPROCESS_H__
