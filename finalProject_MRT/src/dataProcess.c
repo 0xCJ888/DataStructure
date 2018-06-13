@@ -69,12 +69,36 @@ void FloydWarshall(TwoDArray* Distance, TwoDArray* Predecessor){
     }
 }
 
-void findShortestPath(TwoDArray* Predecessor, uint8_t from, uint8_t to){
+void findShortestPath(TwoDArray* Predecessor, uint8_t from, uint8_t to, redisContext *c){
     int station;
+    Vertex* head = NULL;
+    pushVertex(&head, to);
     do{
         station = Predecessor[from].colData[to];
-        printf("%d\n", station);
-        getchar();
+        if(station)
+            pushVertex(&head, station);
         to = station;
     }while(station != -1);
+
+    printVertex(head, c);
+}
+
+void pushVertex(Vertex** head, const int station){
+    Vertex* tmp = (Vertex*)malloc(sizeof(Vertex));
+    tmp->station = station;
+    tmp->nextVertex = *head;
+    *head = tmp;
+}
+
+void printVertex(Vertex* head, redisContext *c){
+    redisReply*  reply;
+    Vertex* current = head;
+    while(current){
+        if(current->station != -1){
+            reply = redisCommand(c, "GET %d", current->station);
+            printf("%s\t", reply->str);
+        }
+        current = current->nextVertex;
+    }
+    puts("");
 }

@@ -25,7 +25,8 @@ int main(){
         const char* tok;
         uint8_t count = 0;
         uint8_t from, to;
-        char* fromNode, toNode;
+        char fromNode[1024];
+        char toNode[1024];
         FILE* pFILE = NULL;
         redisReply *reply;
 
@@ -34,13 +35,12 @@ int main(){
 
         readFile("docs/stationLineNum_121.csv", &pFILE);
         while(fgets(line, 1024, pFILE)){
-            tok = strtok(line, "\n");
-            redisCommand(c, "set %s %d", tok, count);
+            tok = strtok(line, "\r\n");
+            redisCommand(c, "SET %s %d", tok, count);
+            redisCommand(c, "SET %d %s", count, tok);
             count++;
         }
-        
-        reply = redisCommand(c, "keys *");
-        
+
         TwoDArray Distance[stationNum];
         TwoDArray Predecessor[stationNum];
         initTimeData(Distance);
@@ -51,10 +51,14 @@ int main(){
         
         while(1){
             printf("from:");
-            scanf("%s", &from);
+            scanf("%s", fromNode);
             printf("to:");
-            scanf("%s", &to);
-            findShortestPath(Predecessor, from, to); 
+            scanf("%s", toNode);
+            reply = redisCommand(c, "GET %s", fromNode);
+            from = atoi(reply->str);
+            reply = redisCommand(c, "GET %s", toNode);
+            to = atoi(reply->str);
+            findShortestPath(Predecessor, from, to, c); 
         }
         
     }
