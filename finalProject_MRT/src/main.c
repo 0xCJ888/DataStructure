@@ -7,9 +7,10 @@
 #include <signal.h>
 
 #include "hiredis.h"
-#include "dataProcess.h"
+#include "Path.h"
+#include "Price.h"
 
-int main(){
+int main(int argc, char **argv){
     pid_t child_pid;
     child_pid = fork();
     if(child_pid < 0){
@@ -21,46 +22,42 @@ int main(){
         execl("./redis-server", "redis-server", (char*)0);
     }
     else{
-        char line[1024];
-        const char* tok;
-        uint8_t count = 0;
-        uint8_t from, to;
-        char fromNode[1024];
-        char toNode[1024];
-        FILE* pFILE = NULL;
-        redisReply *reply;
+        FILE *pFILE = NULL;
 
         redisContext *c = redisConnect("127.0.0.1", 6379);
         redisCommand(c, "flushall");
 
-        readFile("docs/stationLineNum_121.csv", &pFILE);
-        while(fgets(line, 1024, pFILE)){
-            tok = strtok(line, "\r\n");
-            redisCommand(c, "SET %s %d", tok, count);
-            redisCommand(c, "SET %d %s", count, tok);
-            count++;
-        }
+        readFile("docs/TaipeiMetroPrice.csv", &pFILE);
+        setPrice(c, pFILE);
 
-        TwoDArray Distance[stationNum];
+        readFile("docs/station.txt", &pFILE);
+        setPath(c, pFILE);
+
+        TwoDArray Time[stationNum];
         TwoDArray Predecessor[stationNum];
-        initTimeData(Distance);
+        initTimeData(Time);
         initInterData(Predecessor);
+        
         readFile("docs/TaipeiMetroNumberTime.csv", &pFILE);
-        setTimeField(&pFILE, Distance, Predecessor);
-        FloydWarshall(Distance, Predecessor);
+        setTime(&pFILE, Time, Predecessor);
+        FloydWarshall(Time, Predecessor);
         
-        while(1){
-            printf("from:");
-            scanf("%s", fromNode);
-            printf("to:");
-            scanf("%s", toNode);
-            reply = redisCommand(c, "GET %s", fromNode);
-            from = atoi(reply->str);
-            reply = redisCommand(c, "GET %s", toNode);
-            to = atoi(reply->str);
-            findShortestPath(Predecessor, from, to, c); 
-        }
+        StreamData streamData = {
+            .fromMark = malloc(sizeof(char) * 1024),
+            .fromNode = malloc(sizeof(char) * 1024),
+            .toMark = malloc(sizeof(char) * 1024),
+            .toNode = malloc(sizeof(char) * 1024),
+        };
+
+        streamData.fromMark = argv[1];
+        streamData.fromNode = argv[2];
+        streamData.toMark = argv[3];
+        streamData.toNode = argv[4];
+
+        printPathTime(c, Predecessor, Time, streamData);
+        printPrice(c, streamData.fromNode, streamData.toNode);
         
+        kill(child_pid+1, SIGKILL);  
     }
     return 0;
 }

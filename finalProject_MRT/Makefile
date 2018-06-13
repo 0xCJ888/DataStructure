@@ -1,6 +1,6 @@
 CC = gcc
-SRC = src/main.c src/dataProcess.c
-HEADER = src/dataProcess.h
+SRC = src/main.c src/Path.c src/Price.c
+HEADER = src/Path.h src/Price.h
 OUTPUT = build/MRT
 CFLAG = -std=gnu99 -Wall -g
 LIBDIR = lib/hiredis
