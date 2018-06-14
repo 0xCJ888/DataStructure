@@ -33,7 +33,7 @@ struct _vertex{
 
 void readFile(const char *fileName, FILE **pFile);
 void setPath(redisContext *c, FILE *pFILE);
-void setTime(FILE **pFile, TwoDArray *Distance, TwoDArray *Predecessor);
+void setTime(FILE *pFile, TwoDArray *Distance, TwoDArray *Predecessor);
 void initTimeData(TwoDArray *twoDArray);
 void initInterData(TwoDArray *twoDArray);
 void printArrayData(TwoDArray *twoDArray);

@@ -11,6 +11,8 @@
 #include "Price.h"
 
 int main(int argc, char **argv){
+    if (argc != 5)
+        goto EXIT;
     pid_t child_pid;
     child_pid = fork();
     if(child_pid < 0){
@@ -39,25 +41,24 @@ int main(int argc, char **argv){
         initInterData(Predecessor);
         
         readFile("docs/TaipeiMetroNumberTime.csv", &pFILE);
-        setTime(&pFILE, Time, Predecessor);
+        setTime(pFILE, Time, Predecessor);
         FloydWarshall(Time, Predecessor);
         
-        StreamData streamData = {
-            .fromMark = malloc(sizeof(char) * 1024),
-            .fromNode = malloc(sizeof(char) * 1024),
-            .toMark = malloc(sizeof(char) * 1024),
-            .toNode = malloc(sizeof(char) * 1024),
-        };
+        StreamData streamData;
 
-        streamData.fromMark = argv[1];
-        streamData.fromNode = argv[2];
-        streamData.toMark = argv[3];
-        streamData.toNode = argv[4];
+        strcpy(streamData.fromMark, argv[1]);
+        strcpy(streamData.fromNode, argv[2]);
+        strcpy(streamData.toMark, argv[3]);
+        strcpy(streamData.toNode, argv[4]);
 
         printPathTime(c, Predecessor, Time, streamData);
         printPrice(c, streamData.fromNode, streamData.toNode);
-        
+
         kill(child_pid+1, SIGKILL);  
     }
     return 0;
+    
+    EXIT:
+        perror("there must have four argv!!");
+        exit(0);
 }

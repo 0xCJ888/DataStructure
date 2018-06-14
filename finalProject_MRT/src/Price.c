@@ -11,6 +11,7 @@ void setPrice(redisContext *c, FILE *pFILE){
         priceData.senior = strtok(NULL, "\r\n");
         redisCommand(c, "RPUSH %s\t%s %s %s %s", priceData.departure, priceData.destination, priceData.singleJourney, priceData.easyCard, priceData.senior);
     }
+    fclose(pFILE);
 }
 
 void printPrice(redisContext *c, const char *departure, const char *destination){

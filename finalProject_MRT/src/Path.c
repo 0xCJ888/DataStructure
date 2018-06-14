@@ -17,13 +17,14 @@ void setPath(redisContext *c, FILE *pFILE){
         redisCommand(c, "SET %d %s", count, tok);
         count++;
     }
+    fclose(pFILE);
 }
 
-void setTime(FILE **pFile, TwoDArray *Distance, TwoDArray *Predecessor){
+void setTime(FILE *pFILE, TwoDArray *Distance, TwoDArray *Predecessor){
     TimeData timeData;
     char line[1024];
     const char* tok;
-    while(fgets(line, 1024, *pFile)){
+    while(fgets(line, 1024, pFILE)){
         tok = strtok(line, ",");
         timeData.from = atoi(tok);
         tok = strtok(NULL, ",");
@@ -35,6 +36,7 @@ void setTime(FILE **pFile, TwoDArray *Distance, TwoDArray *Predecessor){
         Predecessor[timeData.from].colData[timeData.to] = timeData.from;
         Predecessor[timeData.to].colData[timeData.from] = timeData.to;
     }
+    fclose(pFILE);
 }
 
 void initTimeData(TwoDArray *twoDArray){
@@ -116,9 +118,17 @@ void printPathTime(redisContext *c, TwoDArray *Predecessor, TwoDArray *Time, Str
     uint8_t from, to;
     redisReply *reply;
     reply = redisCommand(c, "GET %s\t%s", streamData.fromMark, streamData.fromNode);
+    if(!reply->str)
+        goto EXIT;    
     from = atoi(reply->str);
     reply = redisCommand(c, "GET %s\t%s", streamData.toMark, streamData.toNode);
+    if(!reply->str)
+        goto EXIT;
     to = atoi(reply->str);
     findShortestPath(Predecessor, from, to, c);
     printf("Travel time : %.1f min\n\n", Time[from].colData[to] / 60.0f);
+    return;
+    EXIT:
+        perror("Wrong input!!");
+        exit(0);
 }

@@ -19,10 +19,10 @@ struct _priceData{
 };
 
 struct _streamData{
-    char *fromMark;
-    char *toMark;
-    char *fromNode;
-    char *toNode;
+    char fromMark[16];
+    char toMark[16];
+    char fromNode[16];
+    char toNode[16];
 };
 
 void setPrice(redisContext *c, FILE *pFILE);
