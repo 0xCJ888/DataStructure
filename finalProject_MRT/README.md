@@ -17,7 +17,7 @@ Ex.
 ./build/MRT O52 徐匯中學 BR15 劍南路
 ```
 Then,
-you will see Travel Path, Travel time, ticket price
+you will see Travel Path, Travel time, and ticket price.
 
 ```
 Travel path
